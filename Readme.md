@@ -16,8 +16,8 @@ The JS package
 
 ## Non-Goals
 
-- **Secure sandbox for user-submitted Javascript**: To provide better performance, the context is shared across evaluations. This package is not built to evaluate user-submitted Javascript.
-- **Support non-standard runtime APIs**: There's no plans to add APIs that are specific to certain runtime environments such as Cloudflare Workers, Deno, etc. There's no science to this, but more of a heuristic. The API should be available in the web and in most server-side environments like Node.js.
+- **Secure sandbox for user-submitted Javascript**: To provide better performance, the environment is re-used across evaluations. This means that you can set globals to be read in subsequent evaluations. This type of environment is not suitable for user-submitted code.
+- **Support non-standard runtime APIs**: There's no plans to add APIs that are specific to certain runtime environments such as Cloudflare Workers, Deno, etc. There's no science to this, but the following heuristic: It should be a [Web API](https://developer.mozilla.org/en-US/docs/Web/API) and be available in Node.js.
 
 ## License
 
