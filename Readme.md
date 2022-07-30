@@ -1,6 +1,63 @@
 # JS
 
-The JS package
+[![Go Reference](https://pkg.go.dev/badge/github.com/livebud/js.svg)](https://pkg.go.dev/github.com/livebud/js)
+
+The JS package provides a common interface for running Javascript in Go in a consistent environment.
+
+# Examples
+
+## V8
+
+```go
+package main
+
+import (
+	"context"
+	"fmt"
+	"os"
+
+	"github.com/livebud/js"
+	v8 "github.com/livebud/js/v8"
+)
+
+func main() {
+	vm, _ := v8.Load(&js.Console{
+		Log:   os.Stdout,
+		Error: os.Stderr,
+	})
+	defer vm.Close()
+	ctx := context.Background()
+	vm.Evaluate(ctx, "math.js", `const multiply = (a, b) => a * b`)
+	value, _ := vm.Evaluate(ctx, "run.js", "multiply(3, 2)")
+	fmt.Println(value)
+}
+```
+
+## Goja
+
+```go
+package main
+
+import (
+	"context"
+	"fmt"
+	"os"
+
+	"github.com/livebud/js"
+	"github.com/livebud/js/goja"
+)
+
+func main() {
+	vm := goja.New(&js.Console{
+		Log:   os.Stdout,
+		Error: os.Stderr,
+	})
+	ctx := context.Background()
+	vm.Evaluate(ctx, "math.js", `const multiply = (a, b) => a * b`)
+	value, _ := vm.Evaluate(ctx, "run.js", "multiply(3, 2)")
+	fmt.Println(value)
+}
+```
 
 > Note: This package is still a work in progress. Please see the [issues](https://github.com/livebud/js/issues) for what needs to be done.
 
