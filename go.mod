@@ -6,7 +6,7 @@ require (
 	github.com/dop251/goja v0.0.0-20220730095050-d11430fb5f72
 	github.com/matryer/is v1.4.0
 	github.com/matthewmueller/text v0.0.0-20210424201111-ec1e4af8dfe8
-	go.kuoruan.net/v8go-polyfills v0.5.0
+	go.kuoruan.net/v8go-polyfills v0.5.1-0.20220727011656-c74c5b408ebd
 	rogchap.com/v8go v0.7.0
 )
 

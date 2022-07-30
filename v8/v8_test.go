@@ -1,6 +1,7 @@
 package v8_test
 
 import (
+	"bytes"
 	"context"
 	"os"
 	"testing"
@@ -22,6 +23,32 @@ func TestEvaluateTwice(t *testing.T) {
 	value, err = vm.Evaluate(ctx, "run.js", "multiply(3, 2)")
 	is.NoErr(err)
 	is.Equal(value, "6")
+}
+
+func TestConsoleLog(t *testing.T) {
+	is := is.New(t)
+	ctx := context.Background()
+	stdout := new(bytes.Buffer)
+	vm, err := v8.Load(test.Console(stdout, os.Stderr))
+	is.NoErr(err)
+	defer vm.Close()
+	value, err := vm.Evaluate(ctx, "console.js", `console.log("a", 3, { hi: "world" })`)
+	is.NoErr(err)
+	is.Equal("undefined", value)
+	is.Equal("a 3 [object Object]\n", stdout.String())
+}
+
+func TestConsoleError(t *testing.T) {
+	is := is.New(t)
+	ctx := context.Background()
+	stderr := new(bytes.Buffer)
+	vm, err := v8.Load(test.Console(os.Stdout, stderr))
+	is.NoErr(err)
+	defer vm.Close()
+	value, err := vm.Evaluate(ctx, "console.js", `console.error("a", 3, { hi: "world" })`)
+	is.NoErr(err)
+	is.Equal("undefined", value)
+	is.Equal("a 3 [object Object]\n", stderr.String())
 }
 
 // TODO: move to compliance once goja supports this

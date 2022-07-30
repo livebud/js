@@ -8,7 +8,7 @@ import (
 	"github.com/livebud/js"
 )
 
-func New(c js.Console) *VM {
+func New(c *js.Console) *VM {
 	vm := goja.New()
 	vm.GlobalObject().Set("console", console(c))
 	return &VM{vm}

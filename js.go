@@ -1,13 +1,15 @@
 package js
 
-import "context"
+import (
+	"context"
+	"io"
+)
 
 type VM interface {
 	Evaluate(ctx context.Context, path, code string) (string, error)
 }
 
-type Console interface {
-	Log(args ...interface{})
-	Warn(args ...interface{})
-	Error(args ...interface{})
+type Console struct {
+	Log   io.Writer
+	Error io.Writer
 }

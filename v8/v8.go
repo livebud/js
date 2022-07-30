@@ -13,7 +13,7 @@ import (
 type Value = v8go.Value
 type Error = v8go.JSError
 
-func load(log js.Console) (*v8go.Isolate, *v8go.Context, error) {
+func load(c *js.Console) (*v8go.Isolate, *v8go.Context, error) {
 	isolate := v8go.NewIsolate()
 	global := v8go.NewObjectTemplate(isolate)
 	// Fetch support
@@ -33,7 +33,11 @@ func load(log js.Console) (*v8go.Isolate, *v8go.Context, error) {
 	}
 	// Console support
 	// TODO: pass in the console, add support for console.error
-	if err := console.InjectTo(context); err != nil {
+	if err := console.InjectMultipleTo(context,
+		console.NewConsole(console.WithOutput(c.Error), console.WithMethodName("error")),
+		console.NewConsole(console.WithOutput(c.Error), console.WithMethodName("warn")),
+		console.NewConsole(console.WithOutput(c.Log), console.WithMethodName("log")),
+	); err != nil {
 		context.Close()
 		isolate.TerminateExecution()
 		isolate.Dispose()
@@ -42,8 +46,8 @@ func load(log js.Console) (*v8go.Isolate, *v8go.Context, error) {
 	return isolate, context, nil
 }
 
-func Load(log js.Console) (*VM, error) {
-	isolate, context, err := load(log)
+func Load(c *js.Console) (*VM, error) {
+	isolate, context, err := load(c)
 	if err != nil {
 		return nil, err
 	}
