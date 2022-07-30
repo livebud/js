@@ -32,7 +32,6 @@ func load(c *js.Console) (*v8go.Isolate, *v8go.Context, error) {
 		return nil, nil, err
 	}
 	// Console support
-	// TODO: pass in the console, add support for console.error
 	if err := console.InjectMultipleTo(context,
 		console.NewConsole(console.WithOutput(c.Error), console.WithMethodName("error")),
 		console.NewConsole(console.WithOutput(c.Error), console.WithMethodName("warn")),
