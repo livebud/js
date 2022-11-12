@@ -6,6 +6,7 @@ import (
 	"github.com/livebud/js"
 	"go.kuoruan.net/v8go-polyfills/console"
 	"go.kuoruan.net/v8go-polyfills/fetch"
+	"go.kuoruan.net/v8go-polyfills/timers"
 	"go.kuoruan.net/v8go-polyfills/url"
 	"rogchap.com/v8go"
 )
@@ -18,6 +19,12 @@ func load(c *js.Console) (*v8go.Isolate, *v8go.Context, error) {
 	global := v8go.NewObjectTemplate(isolate)
 	// Fetch support
 	if err := fetch.InjectTo(isolate, global); err != nil {
+		isolate.TerminateExecution()
+		isolate.Dispose()
+		return nil, nil, err
+	}
+	// setTimeout & setInterval support
+	if err := timers.InjectTo(isolate, global); err != nil {
 		isolate.TerminateExecution()
 		isolate.Dispose()
 		return nil, nil, err
