@@ -81,3 +81,20 @@ func TestCompliance(t *testing.T) {
 	is.NoErr(err)
 	test.Compliance(t, vm)
 }
+
+func TestPromiseWithSetTimeout(t *testing.T) {
+	is := is.New(t)
+	ctx := context.Background()
+	vm, err := v8.Load(test.Console(os.Stdout, os.Stderr))
+	is.NoErr(err)
+	defer vm.Close()
+	result, err := vm.Evaluate(ctx, "promise.js", `
+		new Promise(function (resolve) {
+			setTimeout(function () {
+				resolve("hello")
+			}, 1000)
+		})
+	`)
+	is.NoErr(err)
+	is.Equal(result, "hello")
+}
