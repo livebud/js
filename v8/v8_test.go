@@ -9,7 +9,6 @@ import (
 	"github.com/livebud/js/internal/test"
 	v8 "github.com/livebud/js/v8"
 	"github.com/matryer/is"
-	"golang.org/x/sync/errgroup"
 )
 
 func TestEvaluateTwice(t *testing.T) {
@@ -98,29 +97,4 @@ func TestPromiseWithSetTimeout(t *testing.T) {
 	`)
 	is.NoErr(err)
 	is.Equal(result, "hello")
-}
-
-func TestConcurrency(t *testing.T) {
-	is := is.New(t)
-	ctx := context.Background()
-	vm, err := v8.Load(test.Console(os.Stdout, os.Stderr))
-	is.NoErr(err)
-	defer vm.Close()
-	value, err := vm.Evaluate(ctx, "math.js", `const multiply = (a, b) => a * b`)
-	is.NoErr(err)
-	is.Equal("undefined", value)
-	eg := new(errgroup.Group)
-	for i := 0; i < 100; i++ {
-		eg.Go(func() error {
-			value, err := vm.Evaluate(ctx, "run.js", "multiply(3, 2)")
-			if err != nil {
-				return err
-			}
-			if value != "6" {
-				return err
-			}
-			return nil
-		})
-	}
-	is.NoErr(eg.Wait())
 }

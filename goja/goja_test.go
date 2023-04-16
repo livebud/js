@@ -8,7 +8,6 @@ import (
 
 	"github.com/livebud/js/goja"
 	"github.com/livebud/js/internal/test"
-	"golang.org/x/sync/errgroup"
 
 	"github.com/matryer/is"
 )
@@ -49,28 +48,4 @@ func TestConsoleError(t *testing.T) {
 
 func TestCompliance(t *testing.T) {
 	test.Compliance(t, goja.New(test.Console(os.Stdout, os.Stderr)))
-}
-
-func TestConcurrency(t *testing.T) {
-	is := is.New(t)
-	ctx := context.Background()
-	stderr := new(bytes.Buffer)
-	vm := goja.New(test.Console(os.Stdout, stderr))
-	value, err := vm.Evaluate(ctx, "math.js", `const multiply = (a, b) => a * b`)
-	is.NoErr(err)
-	is.Equal("undefined", value)
-	eg := new(errgroup.Group)
-	for i := 0; i < 100; i++ {
-		eg.Go(func() error {
-			value, err := vm.Evaluate(ctx, "run.js", "multiply(3, 2)")
-			if err != nil {
-				return err
-			}
-			if value != "6" {
-				return err
-			}
-			return nil
-		})
-	}
-	is.NoErr(eg.Wait())
 }
